@@ -10,7 +10,10 @@
           <!-- <span class="name">崔朋鑫</span> -->
         </h1>
         <p class="hero-subtitle animate">
-          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx。xxxxxxxxxxxxxxxxxxxxxxxx，xxxxxxxxxxxxxxxxxxx。xxxxxxxxxxxxxxxxxxxxxxx，xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx。
+          👋 Hi，欢迎来到我的个人空间！
+          我是一个热爱技术与创造的开发者，专注于前端开发、用户体验与界面设计。
+          在这里，我分享我的项目经验、学习笔记，以及一些关于科技与生活的思考。
+          希望你能在这里找到灵感，若有任何交流想法，欢迎随时联系我！🚀
         </p>
         <div class="social-links">
           <a
