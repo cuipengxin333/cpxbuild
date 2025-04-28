@@ -1,90 +1,204 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from "vue";
 
-const isDark = ref(true)
-const isMenuOpen = ref(false)
+const isDark = ref(true);
+const isMenuOpen = ref(false);
 
-// 初始化主题
-onMounted(() => {
-  // 从本地存储获取主题设置
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme) {
-    isDark.value = savedTheme === 'dark'
+const updateThemeClass = () => {
+  const root = document.documentElement;
+  if (isDark.value) {
+    root.classList.add("dark");
   } else {
-    // 如果没有保存的主题，则使用系统主题
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+    root.classList.remove("dark");
   }
-})
+};
 
-// 监听主题变化并保存
-watch(isDark, (newValue) => {
-  localStorage.setItem('theme', newValue ? 'dark' : 'light')
-})
-
-// 监听系统主题变化
 onMounted(() => {
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  mediaQuery.addEventListener('change', (e) => {
-    if (!localStorage.getItem('theme')) {
-      isDark.value = e.matches
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    isDark.value = savedTheme === "dark";
+    updateThemeClass();
+  } else {
+    isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    updateThemeClass();
+  }
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  mediaQuery.addEventListener("change", (e) => {
+    if (!localStorage.getItem("theme")) {
+      isDark.value = e.matches;
+      updateThemeClass();
     }
-  })
-})
+  });
+});
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+watch(isDark, (newValue) => {
+  localStorage.setItem("theme", newValue ? "dark" : "light");
+  updateThemeClass();
+});
 
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-}
+const darkButton = ref(null);
+
+// 核心动画切换逻辑
+const handleThemeToggle = () => {
+  const root = document.documentElement;
+
+  if (!(document as any).startViewTransition) {
+    isDark.value = !isDark.value;
+    return;
+  }
+
+  // 1. 获取按钮位置
+  const buttonRect = darkButton.value?.getBoundingClientRect();
+  if (!buttonRect) {
+    isDark.value = !isDark.value;
+    return;
+  }
+
+  const centerX = buttonRect.left + buttonRect.width / 2;
+  const centerY = buttonRect.top + buttonRect.height / 2;
+
+  root.style.backgroundColor = getComputedStyle(root).backgroundColor;
+
+  const isCurrentlyDark = isDark.value;
+
+  const transition = (document as any).startViewTransition(() => {
+    isDark.value = !isDark.value;
+  });
+
+  transition.ready.then(() => {
+    const maxRadius = Math.hypot(window.innerWidth, window.innerHeight);
+
+    const startCircle = isCurrentlyDark
+      ? `circle(${maxRadius}px at ${centerX}px ${centerY}px)`
+      : `circle(0px at ${centerX}px ${centerY}px)`;
+    const endCircle = isCurrentlyDark
+      ? `circle(0px at ${centerX}px ${centerY}px)`
+      : `circle(${maxRadius}px at ${centerX}px ${centerY}px)`;
+
+    const animation = root.animate(
+      [{ clipPath: startCircle }, { clipPath: endCircle }],
+      {
+        duration: 800,
+        easing: "ease-in-out",
+        pseudoElement: "::view-transition-new(root)",
+      }
+    );
+
+    animation.finished.then(() => {
+      root.style.clipPath = "none";
+      root.style.backgroundColor = "";
+    });
+  });
+};
 </script>
 
 <template>
-  <div class="app-container" :class="{ 'dark': isDark }">
+  <div class="app-container" :class="{ dark: isDark }">
     <div class="wave-background">
       <div class="wave-1"></div>
       <div class="wave-2"></div>
     </div>
     <nav class="navigation">
       <div class="nav-content">
-        <router-link to="/" class="logo">崔朋鑫</router-link>
-        
+        <div class="logo-container">
+          <img class="logoImg" src="/logo.svg" alt="logo" />
+          <router-link to="/" class="logo">八爪鱼</router-link>
+          <div class="logo-text">
+            <div class="hidiv"></div>
+            <div
+              class="hidiv-text"
+              :style="{ color: isDark ? '#fff' : '#000' }"
+            >
+              八爪鱼八爪鱼八爪鱼
+            </div>
+          </div>
+        </div>
+
         <!-- 移动端菜单按钮 -->
         <button class="menu-toggle" @click="toggleMenu">
-          <svg v-if="!isMenuOpen" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            v-if="!isMenuOpen"
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
-          <svg v-else class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            v-else
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
-        <div class="nav-right" :class="{ 'active': isMenuOpen }">
+        <div class="nav-right" :class="{ active: isMenuOpen }">
           <div class="nav-links">
-            <router-link 
-              to="/" 
-              class="nav-link" 
+            <router-link
+              to="/"
+              class="nav-link"
               active-class="active"
               @click="isMenuOpen = false"
             >
               主页
             </router-link>
-            <router-link 
-              to="/projects" 
-              class="nav-link" 
+            <router-link
+              to="/projects"
+              class="nav-link"
               active-class="active"
               @click="isMenuOpen = false"
             >
               项目经验
             </router-link>
           </div>
-          <button class="theme-toggle" @click="toggleTheme" :title="isDark ? '切换到浅色模式' : '切换到深色模式'">
-            <svg v-if="isDark" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          <button
+            ref="darkButton"
+            class="theme-toggle"
+            @click="handleThemeToggle"
+            :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
+          >
+            <svg
+              v-if="isDark"
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              />
             </svg>
-            <svg v-else class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            <svg
+              v-else
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              />
             </svg>
           </button>
         </div>
@@ -101,20 +215,19 @@ const toggleTheme = () => {
   </div>
 </template>
 
-<style>
+<style lang='scss'>
 :root {
-  /* Dark theme (default) */
-  --primary-color: #4F46E5;
+  --primary-color: #d1c5e3;
   --primary-color-rgb: 79, 70, 229;
-  --accent-color: #60A5FA;
+  --accent-color: #da7be3;
   --accent-color-rgb: 96, 165, 250;
-  --text-primary: #F9FAFB;
-  --text-secondary: #D1D5DB;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
   --bg-primary: #111827;
   --bg-primary-rgb: 17, 24, 39;
-  --bg-secondary: #1F2937;
+  --bg-secondary: #1f2937;
   --card-bg: rgba(31, 41, 55, 0.7);
-  --nav-bg: rgba(17, 24, 39, 0.8);
+  --nav-bg: rgba(17, 24, 39, 0.5);
   --border-color: rgba(255, 255, 255, 0.1);
   --wave-color-1: rgba(79, 70, 229, 0.15);
   --wave-color-2: rgba(96, 165, 250, 0.1);
@@ -124,18 +237,17 @@ const toggleTheme = () => {
 }
 
 .app-container:not(.dark) {
-  /* Light theme */
-  --primary-color: #4338CA;
+  --primary-color: #d1c5e3;
   --primary-color-rgb: 67, 56, 202;
-  --accent-color: #3B82F6;
+  --accent-color: #da7be3;
   --accent-color-rgb: 59, 130, 246;
-  --text-primary: #1F2937;
-  --text-secondary: #4B5563;
-  --bg-primary: #F8FAFC;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --bg-primary: #f8fafc;
   --bg-primary-rgb: 248, 250, 252;
-  --bg-secondary: #FFFFFF;
+  --bg-secondary: #ffffff;
   --card-bg: rgba(255, 255, 255, 0.9);
-  --nav-bg: rgba(255, 255, 255, 0.9);
+  --nav-bg: rgba(255, 255, 255, 0.5);
   --border-color: rgba(0, 0, 0, 0.1);
   --wave-color-1: rgba(67, 56, 202, 0.08);
   --wave-color-2: rgba(59, 130, 246, 0.05);
@@ -150,20 +262,21 @@ const toggleTheme = () => {
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: var(--transition);
@@ -234,16 +347,15 @@ html, body {
   left: 0;
   right: 0;
   height: var(--nav-height);
-  background: var(--nav-bg);
-  backdrop-filter: blur(10px);
-  z-index: 100;
+  background-color: var(--bg-primary);
+  z-index: 3;
   border-bottom: 1px solid var(--border-color);
   transition: var(--transition);
 }
 
 .nav-content {
   height: 100%;
-  padding: 0 2rem;
+  padding: 0 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -252,16 +364,49 @@ html, body {
   width: 100%;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  text-decoration: none;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: relative;
-  z-index: 20;
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .logoImg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--accent-color)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 20;
+  }
+
+  .logo-text {
+    position: relative;
+    width: 150px;
+    height: 2rem;
+    line-height: 2rem;
+    font-weight: bold;
+    text-align: center;
+
+    .hidiv {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(transparent 1px, var(--bg-primary) 1px);
+      background-size: 4px 4px;
+      backdrop-filter: saturate(10%) blur(4px);
+    }
+  }
 }
 
 .nav-right {
@@ -289,6 +434,7 @@ html, body {
 
 .nav-link:hover,
 .nav-link.active {
+  font-weight: bold;
   color: var(--primary-color);
   background: var(--bg-secondary);
 }

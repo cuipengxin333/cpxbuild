@@ -6,7 +6,7 @@
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title animate">
-          <span class="greeting">你好，我是</span>
+          <span class="greeting">你好</span>
           <!-- <span class="name">崔朋鑫</span> -->
         </h1>
         <p class="hero-subtitle animate">
@@ -207,10 +207,10 @@
 .hero-image {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   aspect-ratio: 1;
-  border-radius: 2rem;
+  border-radius: 50%;
   overflow: hidden;
   transform-style: preserve-3d;
   perspective: 1000px;
