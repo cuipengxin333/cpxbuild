@@ -60,7 +60,11 @@ const handleThemeToggle = () => {
   const centerX = buttonRect.left + buttonRect.width / 2;
   const centerY = buttonRect.top + buttonRect.height / 2;
 
-  root.style.backgroundColor = getComputedStyle(root).backgroundColor;
+  if (isDark.value) {
+    root.style.backgroundColor = "#111827"; // 深色背景
+  } else {
+     root.style.backgroundColor = "#f8fafc"; // 浅色背景
+  }
 
   const isCurrentlyDark = isDark.value;
 
