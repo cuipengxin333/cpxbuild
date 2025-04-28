@@ -91,6 +91,10 @@ const handleThemeToggle = () => {
     });
   });
 };
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
 
 <template>
