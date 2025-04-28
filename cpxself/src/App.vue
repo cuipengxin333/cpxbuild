@@ -37,7 +37,7 @@ watch(isDark, (newValue) => {
   updateThemeClass();
 });
 
-const darkButton = ref<HTMLButtonElement>(null);
+const darkButton = ref<HTMLButtonElement | null>(null);
 
 // 核心动画切换逻辑
 const handleThemeToggle = () => {
