@@ -34,7 +34,7 @@ import type { Project } from "../../types/project";
 const route = useRoute();
 // 获取路由参数
 const id = route.params.id;
-const projectDetail = ref<Project>({} as Project);
+const projectDetail = ref<Project | undefined>(undefined);
 
 const getProjectById = async () => {
   const ids = Array.isArray(id) ? Number(id[0]) : Number(id);
