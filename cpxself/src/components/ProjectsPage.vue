@@ -15,7 +15,7 @@ const projects = ref<Project[]>([
     id: 1,
     title: "AI 驱动的代码助手",
     description: "基于深度学习的智能代码补全和建议系统，提高开发效率超过 40%。使用 Vue3 + TypeScript 构建，集成多个开源 AI 模型。",
-    image: "https://bpic.588ku.com/element_origin_min_pic/23/07/11/d32dabe266d10da8b21bd640a2e9b611.jpg!r650",
+    image: "https://img95.699pic.com/photo/60020/1924.jpg_wh300.jpg",
     tags: ["Vue3", "TypeScript", "AI", "机器学习"],
     link: "#"
   },
@@ -23,7 +23,7 @@ const projects = ref<Project[]>([
     id: 2,
     title: "企业级微服务框架",
     description: "高性能、可扩展的微服务架构解决方案，支持容器化部署，服务发现，负载均衡等特性。月活用户超过 100 万。",
-    image: "https://bpic.588ku.com/element_origin_min_pic/23/07/11/d32dabe266d10da8b21bd640a2e9b611.jpg!r650",
+    image: "https://img95.699pic.com/photo/60020/1924.jpg_wh300.jpg",
     tags: ["微服务", "Docker", "Node.js", "MongoDB"],
     link: "#"
   },
@@ -31,7 +31,7 @@ const projects = ref<Project[]>([
     id: 3,
     title: "实时数据可视化平台",
     description: "大规模数据实时处理和可视化系统，支持多维数据分析和自定义图表。使用 WebGL 实现高性能渲染。",
-    image: "https://bpic.588ku.com/element_origin_min_pic/23/07/11/d32dabe266d10da8b21bd640a2e9b611.jpg!r650",
+    image: "https://img95.699pic.com/photo/60020/1924.jpg_wh300.jpg",
     tags: ["WebGL", "React", "数据可视化", "实时处理"],
     link: "#"
   },
@@ -39,7 +39,7 @@ const projects = ref<Project[]>([
     id: 4,
     title: "实时数据可视化平台",
     description: "大规模数据实时处理和可视化系统，支持多维数据分析和自定义图表。使用 WebGL 实现高性能渲染。",
-    image: "https://bpic.588ku.com/element_origin_min_pic/23/07/11/d32dabe266d10da8b21bd640a2e9b611.jpg!r650",
+    image: "https://img95.699pic.com/photo/60020/1924.jpg_wh300.jpg",
     tags: ["WebGL", "React", "数据可视化", "实时处理"],
     link: "#"
   }
