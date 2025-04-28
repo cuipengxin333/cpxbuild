@@ -37,7 +37,7 @@ watch(isDark, (newValue) => {
   updateThemeClass();
 });
 
-const darkButton = ref(null);
+const darkButton = ref<HTMLButtonElement>(null);
 
 // 核心动画切换逻辑
 const handleThemeToggle = () => {
@@ -49,7 +49,9 @@ const handleThemeToggle = () => {
   }
 
   // 1. 获取按钮位置
-  const buttonRect = darkButton.value?.getBoundingClientRect();
+  const buttonRect = (
+    darkButton.value as HTMLButtonElement
+  )?.getBoundingClientRect();
   if (!buttonRect) {
     isDark.value = !isDark.value;
     return;
