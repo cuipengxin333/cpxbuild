@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
-import axios from "axios";
-import { Project } from "../../types/project";
-
-const projects = ref<Project[]>([]);
-
-// 没有预算，所以使用本地json文件
-const getProjects = async () => {
-  const res = await axios.get("/projectData.json");
-  projects.value = res.data;
-};
-
-const goDetail = (id: number) => {
-  window.open(`/projects/${id}`);
-};
-
-onMounted(() => {
-  getProjects();
-});
-</script>
-
 <template>
   <div class="projects-container">
     <h1 class="page-title">项目经验</h1>
@@ -63,6 +41,24 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import axios from "axios";
+import type { Project } from "../../types/project";
+
+const projects = ref<Project[]>([]);
+
+// 没有预算，所以使用本地json文件
+const getProjects = async () => {
+  const res = await axios.get("/projectData.json");
+  projects.value = res.data;
+};
+
+onMounted(() => {
+  getProjects();
+});
+</script>
 
 <style scoped>
 .projects-container {

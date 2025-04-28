@@ -1,5 +1,4 @@
-<script setup lang="ts">
-</script>
+
 
 <template>
   <div class="home-container">
@@ -56,14 +55,14 @@
         </div>
       </div>
       <div class="hero-image animate">
-        <img
-          src="/index.jpg"
-          alt="一个图片"
-        />
+        <img src="/index.jpg" alt="一个图片" />
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+</script>
 
 <style scoped>
 .home-container {

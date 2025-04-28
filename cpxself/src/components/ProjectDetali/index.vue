@@ -26,10 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
-import { Project } from "../../types/project";
+import type { Project } from "../../types/project";
 
 const route = useRoute();
 // 获取路由参数
