@@ -407,6 +407,7 @@ body {
     line-height: 2rem;
     font-weight: bold;
     text-align: center;
+    overflow: hidden;
 
     .hidiv {
       position: absolute;
