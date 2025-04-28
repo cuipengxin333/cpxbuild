@@ -1,108 +1,3 @@
-<script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-
-const isDark = ref(true);
-const isMenuOpen = ref(false);
-
-const updateThemeClass = () => {
-  const root = document.documentElement;
-  if (isDark.value) {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
-};
-
-onMounted(() => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme) {
-    isDark.value = savedTheme === "dark";
-    updateThemeClass();
-  } else {
-    isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    updateThemeClass();
-  }
-
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  mediaQuery.addEventListener("change", (e) => {
-    if (!localStorage.getItem("theme")) {
-      isDark.value = e.matches;
-      updateThemeClass();
-    }
-  });
-});
-
-watch(isDark, (newValue) => {
-  localStorage.setItem("theme", newValue ? "dark" : "light");
-  updateThemeClass();
-});
-
-const darkButton = ref<HTMLButtonElement | null>(null);
-
-// 核心动画切换逻辑
-const handleThemeToggle = () => {
-  const root = document.documentElement;
-
-  if (!(document as any).startViewTransition) {
-    isDark.value = !isDark.value;
-    return;
-  }
-
-  // 1. 获取按钮位置
-  const buttonRect = (
-    darkButton.value as HTMLButtonElement
-  )?.getBoundingClientRect();
-  if (!buttonRect) {
-    isDark.value = !isDark.value;
-    return;
-  }
-
-  const centerX = buttonRect.left + buttonRect.width / 2;
-  const centerY = buttonRect.top + buttonRect.height / 2;
-
-  if (isDark.value) {
-    root.style.backgroundColor = "#111827"; // 深色背景
-  } else {
-     root.style.backgroundColor = "#f8fafc"; // 浅色背景
-  }
-
-  const isCurrentlyDark = isDark.value;
-
-  const transition = (document as any).startViewTransition(() => {
-    isDark.value = !isDark.value;
-  });
-
-  transition.ready.then(() => {
-    const maxRadius = Math.hypot(window.innerWidth, window.innerHeight);
-
-    const startCircle = isCurrentlyDark
-      ? `circle(${maxRadius}px at ${centerX}px ${centerY}px)`
-      : `circle(0px at ${centerX}px ${centerY}px)`;
-    const endCircle = isCurrentlyDark
-      ? `circle(0px at ${centerX}px ${centerY}px)`
-      : `circle(${maxRadius}px at ${centerX}px ${centerY}px)`;
-
-    const animation = root.animate(
-      [{ clipPath: startCircle }, { clipPath: endCircle }],
-      {
-        duration: 800,
-        easing: "ease-in-out",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
-
-    animation.finished.then(() => {
-      root.style.clipPath = "none";
-      root.style.backgroundColor = "";
-    });
-  });
-};
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
-</script>
-
 <template>
   <div class="app-container" :class="{ dark: isDark }">
     <div class="wave-background">
@@ -224,6 +119,112 @@ const toggleMenu = () => {
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted, watch } from "vue";
+
+const isDark = ref(true);
+const isMenuOpen = ref(false);
+
+const updateThemeClass = () => {
+  const root = document.documentElement;
+  if (isDark.value) {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
+};
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    isDark.value = savedTheme === "dark";
+    updateThemeClass();
+  } else {
+    isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    updateThemeClass();
+  }
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  mediaQuery.addEventListener("change", (e) => {
+    if (!localStorage.getItem("theme")) {
+      isDark.value = e.matches;
+      updateThemeClass();
+    }
+  });
+});
+
+watch(isDark, (newValue) => {
+  localStorage.setItem("theme", newValue ? "dark" : "light");
+  updateThemeClass();
+});
+
+const darkButton = ref<HTMLButtonElement | null>(null);
+
+// 核心动画切换逻辑
+const handleThemeToggle = () => {
+  const root = document.documentElement;
+
+  if (!(document as any).startViewTransition) {
+    isDark.value = !isDark.value;
+    return;
+  }
+
+  // 1. 获取按钮位置
+  const buttonRect = (
+    darkButton.value as HTMLButtonElement
+  )?.getBoundingClientRect();
+  if (!buttonRect) {
+    isDark.value = !isDark.value;
+    return;
+  }
+
+  const centerX = buttonRect.left + buttonRect.width / 2;
+  const centerY = buttonRect.top + buttonRect.height / 2;
+
+  if (isDark.value) {
+    root.style.backgroundColor = "#111827"; // 深色背景
+  } else {
+    root.style.backgroundColor = "#f8fafc"; // 浅色背景
+  }
+
+  const isCurrentlyDark = isDark.value;
+
+  const transition = (document as any).startViewTransition(() => {
+    isDark.value = !isDark.value;
+  });
+
+  transition.ready.then(() => {
+    const maxRadius = Math.hypot(window.innerWidth, window.innerHeight);
+
+    const startCircle = isCurrentlyDark
+      ? `circle(${maxRadius}px at ${centerX}px ${centerY}px)`
+      : `circle(0px at ${centerX}px ${centerY}px)`;
+    const endCircle = isCurrentlyDark
+      ? `circle(0px at ${centerX}px ${centerY}px)`
+      : `circle(${maxRadius}px at ${centerX}px ${centerY}px)`;
+
+    const animation = root.animate(
+      [{ clipPath: startCircle }, { clipPath: endCircle }],
+      {
+        duration: 800,
+        easing: "ease-in-out",
+        pseudoElement: "::view-transition-new(root)",
+      }
+    );
+
+    animation.finished.then(() => {
+      root.style.clipPath = "none";
+      root.style.backgroundColor = "";
+    });
+  });
+};
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+</script>
+
 
 <style lang='scss'>
 :root {
@@ -407,6 +408,7 @@ body {
     line-height: 2rem;
     font-weight: bold;
     text-align: center;
+    overflow: hidden;
 
     .hidiv {
       position: absolute;
