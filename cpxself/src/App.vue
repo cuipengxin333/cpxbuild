@@ -55,20 +55,14 @@
         <div class="nav-right" :class="{ active: isMenuOpen }">
           <div class="nav-links">
             <router-link
-              to="/"
+              v-for="item in navbarList"
+              :key="item.href"
+              :to="item.href"
               class="nav-link"
               active-class="active"
               @click="isMenuOpen = false"
             >
-              主页
-            </router-link>
-            <router-link
-              to="/projects"
-              class="nav-link"
-              active-class="active"
-              @click="isMenuOpen = false"
-            >
-              项目经验
+              {{ item.name }}
             </router-link>
           </div>
           <button
@@ -122,6 +116,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
+
+const navbarList = ref([
+  { name: "主页", href: "/" },
+  { name: "玩玩看", href: "/showcase" },
+  { name: "项目经验", href: "/projects" },
+]);
 
 const isDark = ref(true);
 const isMenuOpen = ref(false);
@@ -218,6 +218,10 @@ const handleThemeToggle = () => {
       root.style.backgroundColor = "";
     });
   });
+
+  setTimeout(() => {
+    toggleMenu();
+  }, 1000);
 };
 
 const toggleMenu = () => {
