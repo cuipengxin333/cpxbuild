@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../components/HomePage/index.vue'
-import ShowCase from '../components/ShowCase/index.vue'
-import ProjectsPage from '../components/ProjectsPage/index.vue'
-import ProjectDetali from '../components//ProjectDetali/index.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -10,20 +6,27 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomePage
+      component: () => import('../view/HomePage/index.vue')
     }, {
       path: '/showcase',
       name: 'showcase',
-      component: ShowCase
+      component: () => import('../view/ShowCase/index.vue'),
+      children: [
+        {
+          path: 'unloadAnimation',
+          name: 'unloadAnimation',
+          component: () => import('../view/ShowCase/components/UnloadAnimation/index.vue')
+        }
+      ]
     },
     {
       path: '/projects',
       name: 'projects',
-      component: ProjectsPage
+      component: () => import('../view/ProjectsPage/index.vue')
     }, {
       path: '/projects/:id',
       name: 'projectDetali',
-      component: ProjectDetali
+      component: () => import('../view/ProjectDetali/index.vue')
     }
   ]
 })
