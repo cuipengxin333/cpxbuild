@@ -37,14 +37,16 @@
       </div>
     </div>
     <div class="bottom">
-      <button class="cancel">保留</button>
-      <button class="confirm">卸载</button>
+      <button class="cancel" @click="handleCancel">保留</button>
+      <button class="confirm" @click="handleConfirm">卸载</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, getCurrentInstance } from "vue";
+
+const { appContext } = getCurrentInstance();
 
 // 背景颜色变化
 const huedeg = ref(0);
@@ -203,6 +205,22 @@ const handleMouseLeave = () => {
     rightPupilY: 0,
   };
   if (!animationFrameId) animate();
+};
+
+const handleCancel = () => {
+  appContext.config.globalProperties.$toast({
+    message: "保留成功",
+    type: "success",
+    duration: 3000,
+  });
+};
+
+const handleConfirm = () => {
+  appContext.config.globalProperties.$toast({
+    message: "卸载成功",
+    type: "error",
+    duration: 3000,
+  });
 };
 
 onMounted(() => {
