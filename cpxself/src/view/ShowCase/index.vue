@@ -273,7 +273,9 @@ const handleClose = () => {
   }
 
   .item-info {
+    text-align: center;
     padding: 1.5rem;
+    background: var(--bg-title);
   }
 
   .item-title {
