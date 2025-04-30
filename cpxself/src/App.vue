@@ -328,6 +328,8 @@ const toggleMenu = () => {
   --wave-blur: 120px;
   --wave-opacity-1: 0.5;
   --wave-opacity-2: 0.3;
+  --bg-title: rgb(166, 170, 223);
+
 }
 
 .app-container:not(.dark) {
@@ -374,6 +376,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: var(--transition);
+  scrollbar-width: none;
 }
 
 #app {
