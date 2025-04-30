@@ -57,34 +57,34 @@ const contList = ref([
     id: 1,
     title: "圆脸卸载动画",
     link: "unloadAnimation",
-    img: "/logo.svg",
+    img: "/face.png",
     isDesktop: true,
   },
   {
     id: 2,
-    title: "圆脸卸载动画",
-    link: "unloadAnimation",
+    title: "aa",
+    link: "aa",
     img: "/logo.svg",
     isDesktop: false,
   },
   {
     id: 3,
-    title: "圆脸卸载动画",
-    link: "unloadAnimation",
+    title: "aa",
+    link: "aa",
     img: "/logo.svg",
     isDesktop: true,
   },
   {
     id: 4,
-    title: "圆脸卸载动画",
-    link: "unloadAnimation",
+    title: "aa",
+    link: "aa",
     img: "/logo.svg",
     isDesktop: true,
   },
   {
     id: 5,
-    title: "圆脸卸载动画",
-    link: "unloadAnimation",
+    title: "aa",
+    link: "aa",
     img: "/logo.svg",
     isDesktop: true,
   },
@@ -327,8 +327,8 @@ const handleClose = () => {
 
   .close-button {
     position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
+    top: 1rem;
+    right: 1rem;
     width: 25px;
     height: 25px;
     line-height: 20px;
