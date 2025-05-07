@@ -249,7 +249,6 @@ const handleThemeToggle = () => {
     return;
   }
 
-  // 1. 获取按钮位置
   const buttonRect = (
     darkButton.value as HTMLButtonElement
   )?.getBoundingClientRect();
