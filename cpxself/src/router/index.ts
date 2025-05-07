@@ -17,9 +17,9 @@ const router = createRouter({
           name: 'unloadAnimation',
           component: () => import('../view/ShowCase/components/UnloadAnimation/index.vue')
         }, {
-          path: 'aa',
-          name: 'aa',
-          component: () => import('../view/ShowCase/components/aa/index.vue')
+          path: 'imageRotation',
+          name: 'imageRotation',
+          component: () => import('../view/ShowCase/components/ImageRotation/index.vue')
         }
       ]
     },
