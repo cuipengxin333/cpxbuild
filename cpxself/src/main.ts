@@ -9,4 +9,4 @@ const app = createApp(App)
 app.use(router)
 app.mount('#app')
 
-app.use(Toast) // 使用插件
+app.use(Toast)

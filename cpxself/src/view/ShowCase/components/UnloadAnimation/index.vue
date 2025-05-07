@@ -66,7 +66,7 @@ const container = ref(null);
 const pupilLeft = ref(null);
 const pupilRight = ref(null);
 
-// 1. 定义"当前值"和"目标值"
+// 定义"当前值"和"目标值"
 const state = {
   // 目标值
   target: {
@@ -102,7 +102,7 @@ const state = {
 
 let animationFrameId = null;
 
-// 2. 缓动函数
+// 缓动函数
 function animate() {
   let needUpdate = false;
   for (const key in state.current) {
@@ -135,7 +135,7 @@ function animate() {
   }
 }
 
-// 3. 鼠标移动时只更新目标值
+// 鼠标移动时只更新目标值
 const handleMouseMove = (e) => {
   const face = document.querySelector(".unload");
   const rect = face.getBoundingClientRect();
@@ -223,15 +223,8 @@ const handleConfirm = () => {
   });
 };
 
-onMounted(() => {
-  // 移除这行
-  // window.addEventListener('mousemove', movePupils);
-});
-
 onUnmounted(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
-  // 移除这行
-  // window.removeEventListener('mousemove', movePupils);
 });
 </script>
 
