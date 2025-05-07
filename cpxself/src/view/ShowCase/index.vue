@@ -62,32 +62,32 @@ const contList = ref([
   },
   {
     id: 2,
-    title: "aa",
-    link: "aa",
-    img: "/logo.svg",
+    title: "图片旋转动画",
+    link: "imageRotation",
+    img: "/imageRota.png",
     isDesktop: false,
   },
-  {
-    id: 3,
-    title: "aa",
-    link: "aa",
-    img: "/logo.svg",
-    isDesktop: true,
-  },
-  {
-    id: 4,
-    title: "aa",
-    link: "aa",
-    img: "/logo.svg",
-    isDesktop: true,
-  },
-  {
-    id: 5,
-    title: "aa",
-    link: "aa",
-    img: "/logo.svg",
-    isDesktop: true,
-  },
+  // {
+  //   id: 3,
+  //   title: "aa",
+  //   link: "aa",
+  //   img: "/logo.svg",
+  //   isDesktop: true,
+  // },
+  // {
+  //   id: 4,
+  //   title: "aa",
+  //   link: "aa",
+  //   img: "/logo.svg",
+  //   isDesktop: true,
+  // },
+  // {
+  //   id: 5,
+  //   title: "aa",
+  //   link: "aa",
+  //   img: "/logo.svg",
+  //   isDesktop: true,
+  // },
 ]);
 
 const handleClick = (item) => {

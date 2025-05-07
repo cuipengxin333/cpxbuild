@@ -368,7 +368,7 @@ onUnmounted(() => {
       border-radius: 10px;
       border: none;
       font-size: 1.2rem;
-      color: var(--text-primary);
+      color: #fff;
       letter-spacing: 0.2rem;
       display: flex;
       justify-content: center;
