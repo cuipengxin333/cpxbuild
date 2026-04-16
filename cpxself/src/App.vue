@@ -119,8 +119,7 @@ import { ref, onMounted, watch } from "vue";
 
 const navbarList = ref([
   { name: "主页", href: "/" },
-  { name: "玩玩看", href: "/showcase" },
-  { name: "项目经验", href: "/projects" },
+  { name: "玩玩看", href: "/showcase" }
 ]);
 
 const isDark = ref(true);
@@ -271,16 +270,16 @@ const handleThemeToggle = () => {
       `circle(${maxRadius}px at ${centerX}px ${centerY}px)`,
     ];
 
+    // 统一使用向外扩散逻辑：始终让新图层 (::view-transition-new) 扩张
+    // 这样可以避免“收缩”到最后 0px 时可能出现的坐标偏移或像素抖动（闪烁）
     document.documentElement.animate(
       {
-        clipPath: isDark.value ? clipPath.reverse() : clipPath,
+        clipPath: clipPath,
       },
       {
         duration: 500,
         easing: "ease-in-out",
-        pseudoElement: isDark.value
-          ? "::view-transition-old(root)"
-          : "::view-transition-new(root)",
+        pseudoElement: "::view-transition-new(root)",
       }
     );
   });
@@ -317,7 +316,7 @@ const toggleMenu = () => {
 }
 
 .app-container:not(.dark) {
-  --primary-color: #d1c5e3;
+  --primary-color: #ED8BBB;
   --primary-color-rgb: 67, 56, 202;
   --accent-color: #da7be3;
   --accent-color-rgb: 59, 130, 246;
@@ -612,20 +611,13 @@ body {
   mix-blend-mode: normal;
 }
 
+/* 确保新图层始终在旧图层之上，以便执行向外扩张动画 */
 ::view-transition-old(root) {
   z-index: 1;
 }
 
 ::view-transition-new(root) {
   z-index: 9999;
-}
-
-.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
 }
 
 .fade-enter-active,
