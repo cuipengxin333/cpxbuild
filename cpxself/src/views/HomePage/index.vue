@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="home-container">
     <div class="hero-section">
@@ -58,13 +56,176 @@
         <img src="/index.jpg" alt="一个图片" />
       </div>
     </div>
+    
+    <!-- MBTI 测试气泡 -->
+    <transition name="bubble-fade">
+      <div v-if="showBubble" class="mbti-bubble-container">
+        <div class="mbti-bubble" @click="goToMBTI">
+          <div class="bubble-content">
+            <span class="bubble-tag">热门</span>
+            <span class="bubble-text">MBTI测试，去测一测</span>
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <button class="close-btn" @click.stop="closeBubble" title="关闭">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const showBubble = ref(false);
+
+onMounted(() => {
+  // 延迟 1 秒显示气泡，增加吸引力
+  setTimeout(() => {
+    const isClosed = sessionStorage.getItem('mbti_bubble_closed');
+    if (!isClosed) {
+      showBubble.value = true;
+    }
+  }, 1000);
+});
+
+const closeBubble = () => {
+  showBubble.value = false;
+  sessionStorage.setItem('mbti_bubble_closed', 'true');
+};
+
+const goToMBTI = () => {
+  router.push('/oejts32');
+};
 </script>
 
 <style scoped>
+.mbti-bubble-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 100;
+}
+
+.mbti-bubble {
+  position: relative;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  padding: 0.75rem 1.5rem;
+  border-radius: 3rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(var(--primary-color-rgb), 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+.mbti-bubble:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(var(--primary-color-rgb), 0.4);
+}
+
+.bubble-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding-right: 0.5rem;
+}
+
+.bubble-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.arrow-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.mbti-bubble:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+.close-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn:hover {
+  background: #ff4757;
+  color: white;
+  border-color: #ff4757;
+  transform: scale(1.1);
+}
+
+.close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 动画 */
+.bubble-fade-enter-active,
+.bubble-fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.bubble-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.5) translateY(50px);
+}
+
+.bubble-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.5) translateY(20px);
+}
+
+@media (max-width: 768px) {
+  .mbti-bubble-container {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    left: 1.5rem;
+  }
+  
+  .mbti-bubble {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .home-container {
   width: 100%;
   min-height: calc(100vh - var(--nav-height));
