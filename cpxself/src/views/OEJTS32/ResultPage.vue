@@ -198,8 +198,8 @@ const avatarStyle = computed(() => {
 });
 
 const dimensionPairs = computed(() => {
-  if (!result.value?.percentiles) return [];
-  const p = result.value.percentiles;
+  if (!result.value?.percentages) return [];
+  const p = result.value.percentages;
   return [
     { 
       left: { char: 'E', name: '外向', val: p.E }, 
