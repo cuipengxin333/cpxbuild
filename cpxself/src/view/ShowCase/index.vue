@@ -59,35 +59,7 @@ const contList = ref([
     link: "unloadAnimation",
     img: "/face.png",
     isDesktop: true,
-  },
-  {
-    id: 2,
-    title: "图片旋转动画",
-    link: "imageRotation",
-    img: "/imageRota.png",
-    isDesktop: false,
-  },
-  // {
-  //   id: 3,
-  //   title: "aa",
-  //   link: "aa",
-  //   img: "/logo.svg",
-  //   isDesktop: true,
-  // },
-  // {
-  //   id: 4,
-  //   title: "aa",
-  //   link: "aa",
-  //   img: "/logo.svg",
-  //   isDesktop: true,
-  // },
-  // {
-  //   id: 5,
-  //   title: "aa",
-  //   link: "aa",
-  //   img: "/logo.svg",
-  //   isDesktop: true,
-  // },
+  }
 ]);
 
 const handleClick = (item) => {
