@@ -242,16 +242,12 @@ const darkButton = ref<HTMLButtonElement | null>(null);
 
 // 核心动画切换逻辑
 const handleThemeToggle = () => {
-  const root = document.documentElement;
-
   if (!(document as any).startViewTransition) {
     isDark.value = !isDark.value;
     return;
   }
 
-  const buttonRect = (
-    darkButton.value as HTMLButtonElement
-  )?.getBoundingClientRect();
+  const buttonRect = darkButton.value?.getBoundingClientRect();
   if (!buttonRect) {
     isDark.value = !isDark.value;
     return;
@@ -260,46 +256,34 @@ const handleThemeToggle = () => {
   const centerX = buttonRect.left + buttonRect.width / 2;
   const centerY = buttonRect.top + buttonRect.height / 2;
 
-  if (isDark.value) {
-    root.style.backgroundColor = "#111827"; // 深色背景
-  } else {
-    root.style.backgroundColor = "#f8fafc"; // 浅色背景
-  }
-
-  const isCurrentlyDark = isDark.value;
-
   const transition = (document as any).startViewTransition(() => {
     isDark.value = !isDark.value;
   });
 
   transition.ready.then(() => {
-    const maxRadius = Math.hypot(window.innerWidth, window.innerHeight);
-
-    const startCircle = isCurrentlyDark
-      ? `circle(${maxRadius}px at ${centerX}px ${centerY}px)`
-      : `circle(0px at ${centerX}px ${centerY}px)`;
-    const endCircle = isCurrentlyDark
-      ? `circle(0px at ${centerX}px ${centerY}px)`
-      : `circle(${maxRadius}px at ${centerX}px ${centerY}px)`;
-
-    const animation = root.animate(
-      [{ clipPath: startCircle }, { clipPath: endCircle }],
-      {
-        duration: 800,
-        easing: "ease-in-out",
-        pseudoElement: "::view-transition-new(root)",
-      }
+    const maxRadius = Math.hypot(
+      Math.max(centerX, window.innerWidth - centerX),
+      Math.max(centerY, window.innerHeight - centerY)
     );
 
-    animation.finished.then(() => {
-      root.style.clipPath = "none";
-      root.style.backgroundColor = "";
-    });
-  });
+    const clipPath = [
+      `circle(0px at ${centerX}px ${centerY}px)`,
+      `circle(${maxRadius}px at ${centerX}px ${centerY}px)`,
+    ];
 
-  setTimeout(() => {
-    toggleMenu();
-  }, 1000);
+    document.documentElement.animate(
+      {
+        clipPath: isDark.value ? clipPath.reverse() : clipPath,
+      },
+      {
+        duration: 500,
+        easing: "ease-in-out",
+        pseudoElement: isDark.value
+          ? "::view-transition-old(root)"
+          : "::view-transition-new(root)",
+      }
+    );
+  });
 };
 
 const toggleMenu = () => {
@@ -328,7 +312,8 @@ const toggleMenu = () => {
   --wave-opacity-1: 0.5;
   --wave-opacity-2: 0.3;
   --bg-title: rgb(166, 170, 223);
-
+  --tag-bg: #374151;
+  --tag-text: #e5e7eb;
 }
 
 .app-container:not(.dark) {
@@ -349,6 +334,8 @@ const toggleMenu = () => {
   --wave-blur: 80px;
   --wave-opacity-1: 0.4;
   --wave-opacity-2: 0.2;
+  --tag-bg: #f3f4f6;
+  --tag-text: #4b5563;
 }
 
 /* Constants */
@@ -619,14 +606,41 @@ body {
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
-.fade-enter-from,
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
 .fade-leave-to {
   opacity: 0;
+  transform: translateY(-10px);
 }
 
 @keyframes wave {

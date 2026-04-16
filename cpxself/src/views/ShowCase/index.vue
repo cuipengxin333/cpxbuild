@@ -29,27 +29,31 @@
       </div>
     </div>
 
-    <div v-show="popoverShow" class="showcase-modal">
-      <div class="modal-content">
-        <div class="close-button" @click="handleClose">
-          <span class="close-icon">×</span>
+    <transition name="modal-fade">
+      <div v-if="popoverShow" class="showcase-modal" @click.self="handleClose">
+        <div class="modal-content">
+          <button class="close-button" @click="handleClose" aria-label="关闭">
+            <span class="close-icon">×</span>
+          </button>
+          <router-view v-slot="{ Component }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
         </div>
-        <router-view></router-view>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { getCurrentInstance } from "vue";
 import getUserEnvironment from "../../utils/getUserEnv";
 
 const { appContext } = getCurrentInstance();
-
 const router = useRouter();
-
 const popoverShow = ref(false);
 
 const contList = ref([
@@ -61,6 +65,15 @@ const contList = ref([
     isDesktop: true,
   }
 ]);
+
+// 监听弹窗状态，处理 body 滚动
+watch(popoverShow, (val) => {
+  if (val) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
 
 const handleClick = (item) => {
   const isDesktop = getUserEnvironment() === "desktop";
@@ -74,25 +87,38 @@ const handleClick = (item) => {
     return;
   }
 
-  document.body.style.overflow = "hidden";
-  document.documentElement.style.overflow = "hidden";
-
-  popoverShow.value = !popoverShow.value;
+  popoverShow.value = true;
   router.push({ name: item.link });
 };
 
 const handleClose = () => {
-  document.body.style.position = "";
-  document.body.style.width = "";
-  document.body.style.overflow = "";
-  document.documentElement.style.overflow = "";
-
   popoverShow.value = false;
   router.back();
 };
 </script>
 
 <style lang="scss">
+/* 弹窗过渡动画 */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .modal-content {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+  backdrop-filter: blur(0);
+
+  .modal-content {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+}
+
 .showcase-container {
   min-height: 100vh;
   background: var(--bg-color);

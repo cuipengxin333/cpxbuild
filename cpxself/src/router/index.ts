@@ -6,31 +6,18 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../view/HomePage/index.vue')
+      component: () => import('../views/HomePage/index.vue')
     }, {
       path: '/showcase',
       name: 'showcase',
-      component: () => import('../view/ShowCase/index.vue'),
+      component: () => import('../views/ShowCase/index.vue'),
       children: [
         {
           path: 'unloadAnimation',
           name: 'unloadAnimation',
-          component: () => import('../view/ShowCase/components/UnloadAnimation/index.vue')
-        }, {
-          path: 'imageRotation',
-          name: 'imageRotation',
-          component: () => import('../view/ShowCase/components/ImageRotation/index.vue')
+          component: () => import('../views/ShowCase/components/UnloadAnimation/index.vue')
         }
       ]
-    },
-    {
-      path: '/projects',
-      name: 'projects',
-      component: () => import('../view/ProjectsPage/index.vue')
-    }, {
-      path: '/projects/:id',
-      name: 'projectDetali',
-      component: () => import('../view/ProjectDetali/index.vue')
     }
   ]
 })
