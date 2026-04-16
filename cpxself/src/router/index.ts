@@ -2,6 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      // 强制所有跳转都滚到顶部
+      return { top: 0, left: 0, behavior: 'auto' };
+    }
+  },
   routes: [
     {
       path: '/',
@@ -18,6 +26,14 @@ const router = createRouter({
           component: () => import('../views/ShowCase/components/UnloadAnimation/index.vue')
         }
       ]
+    }, {
+      path: '/oejts32',
+      name: 'oejts32',
+      component: () => import('../views/OEJTS32/index.vue')
+    }, {
+      path: '/oejts32/result',
+      name: 'oejts32Result',
+      component: () => import('../views/OEJTS32/ResultPage.vue')
     }
   ]
 })

@@ -119,7 +119,8 @@ import { ref, onMounted, watch } from "vue";
 
 const navbarList = ref([
   { name: "主页", href: "/" },
-  { name: "玩玩看", href: "/showcase" }
+  { name: "玩玩看", href: "/showcase" },
+  { name: "人格测试", href: "/oejts32" }
 ]);
 
 const isDark = ref(true);
@@ -352,8 +353,6 @@ const toggleMenu = () => {
 html,
 body {
   width: 100%;
-  height: 100%;
-  overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -366,7 +365,6 @@ body {
 
 #app {
   width: 100%;
-  height: 100%;
 }
 
 .app-container {
@@ -385,7 +383,6 @@ body {
   margin-top: var(--nav-height);
   position: relative;
   z-index: 2;
-  overflow-x: hidden;
 }
 
 .wave-background {
@@ -470,6 +467,7 @@ body {
     -webkit-text-fill-color: transparent;
     position: relative;
     z-index: 20;
+    white-space: nowrap;
   }
 
   .logo-text {
