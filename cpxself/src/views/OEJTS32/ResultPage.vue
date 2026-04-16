@@ -145,7 +145,7 @@ onMounted(async () => {
 });
 
 // 如果是在结果页内更新（例如重新测试后再次进入）
-onBeforeRouteUpdate(async (to, from, next) => {
+onBeforeRouteUpdate(async (_to, _from, next) => {
   next();
   await nextTick();
   scrollToTop();
