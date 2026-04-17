@@ -24,7 +24,7 @@
       <!-- 题目列表 -->
       <div class="questions-list">
         <div
-          v-for="(q, index) in questions"
+          v-for="(q, index) in shuffledQuestions"
           :key="q.id"
           :id="'q-' + q.id"
           class="question-item"
@@ -126,6 +126,17 @@ import axios from "axios";
 const { appContext } = getCurrentInstance()!;
 const router = useRouter();
 
+// 题目随机化逻辑
+const shuffleArray = (array: any[]) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
+const shuffledQuestions = ref(shuffleArray(questions));
 const totalQuestions = questions.length;
 const options = [
   { label: "完全不同意", value: 1 },
@@ -146,7 +157,8 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
+  document.title = "OEJTS-32 人格测试";
+   window.addEventListener("scroll", handleScroll);
 });
 
 onUnmounted(() => {

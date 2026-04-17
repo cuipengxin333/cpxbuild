@@ -16,17 +16,6 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomePage/index.vue')
     }, {
-      path: '/showcase',
-      name: 'showcase',
-      component: () => import('../views/ShowCase/index.vue'),
-      children: [
-        {
-          path: 'unloadAnimation',
-          name: 'unloadAnimation',
-          component: () => import('../views/ShowCase/components/UnloadAnimation/index.vue')
-        }
-      ]
-    }, {
       path: '/oejts32',
       name: 'oejts32',
       component: () => import('../views/OEJTS32/index.vue')
@@ -34,6 +23,10 @@ const router = createRouter({
       path: '/oejts32/result',
       name: 'oejts32Result',
       component: () => import('../views/OEJTS32/ResultPage.vue')
+    }, {
+      path: '/toolbox',
+      name: 'toolbox',
+      component: () => import('../views/ToolBox/index.vue')
     }
   ]
 })

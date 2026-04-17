@@ -45,7 +45,7 @@ onMounted(() => {
   background-color: #5dade2;  
 }
 .toast.success {
-  background-color: #58d68d;  
+  background-color: #53c0e0;  
 }
 .toast.warning {
   background-color: #d5b536;   

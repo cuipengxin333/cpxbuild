@@ -87,6 +87,7 @@ const router = useRouter();
 const showBubble = ref(false);
 
 onMounted(() => {
+  document.title = "八爪鱼";
   // 延迟 1 秒显示气泡，增加吸引力
   setTimeout(() => {
     const isClosed = sessionStorage.getItem('mbti_bubble_closed');

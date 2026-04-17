@@ -140,6 +140,7 @@ const scrollToTop = () => {
 };
 
 onMounted(async () => {
+  document.title = "OEJTS-32 人格测试结果";
   await nextTick();
   scrollToTop();
 });
