@@ -4,7 +4,6 @@
       <div class="hero-content">
         <h1 class="hero-title animate">
           <span class="greeting">你好</span>
-          <!-- <span class="name">崔朋鑫</span> -->
         </h1>
         <p class="hero-subtitle animate">
           👋 Hi，欢迎来到我的个人空间！
