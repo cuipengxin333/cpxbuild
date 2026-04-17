@@ -31,6 +31,10 @@ const router = createRouter({
       path: '/aichat',
       name: 'aichat',
       component: () => import('../views/AIChat/index.vue')
+    }, {
+      path: '/plaintext',
+      name: 'plaintext',
+      component: () => import('../views/PlainText/index.vue')
     }
   ]
 })

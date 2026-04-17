@@ -11,10 +11,7 @@
           <router-link to="/" class="logo">八爪鱼</router-link>
           <div class="logo-text">
             <div class="hidiv"></div>
-            <div
-              class="hidiv-text"
-              :style="{ color: isDark ? '#fff' : '#000' }"
-            >
+            <div class="hidiv-text" :style="{ color: isDark ? '#fff' : '#000' }">
               八爪鱼八爪鱼八爪鱼
             </div>
           </div>
@@ -22,82 +19,30 @@
 
         <!-- 移动端菜单按钮 -->
         <button class="menu-toggle" @click="toggleMenu">
-          <svg
-            v-if="!isMenuOpen"
-            class="icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+          <svg v-if="!isMenuOpen" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <svg
-            v-else
-            class="icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
+          <svg v-else class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         <div class="nav-right" :class="{ active: isMenuOpen }">
           <div class="nav-links">
-            <router-link
-              v-for="item in navbarList"
-              :key="item.href"
-              :to="item.href"
-              class="nav-link"
-              active-class="active"
-              @click="isMenuOpen = false"
-            >
+            <router-link v-for="item in navbarList" :key="item.href" :to="item.href" class="nav-link"
+              active-class="active" @click="isMenuOpen = false">
               {{ item.name }}
             </router-link>
           </div>
-          <button
-            ref="darkButton"
-            class="theme-toggle"
-            @click="handleThemeToggle"
-            :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
-          >
-            <svg
-              v-if="isDark"
-              class="icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-              />
+          <button ref="darkButton" class="theme-toggle" @click="handleThemeToggle"
+            :title="isDark ? '切换到浅色模式' : '切换到深色模式'">
+            <svg v-if="isDark" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <svg
-              v-else
-              class="icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
+            <svg v-else class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </button>
         </div>
@@ -119,9 +64,10 @@ import { ref, onMounted, watch } from "vue";
 
 const navbarList = ref([
   { name: "主页", href: "/" },
-  { name: "人格测试", href: "/oejts32" },
   { name: "工具箱", href: "/toolbox" },
+  { name: "趣味生成", href: "/plaintext" },
   { name: "AIChat", href: "/aichat" },
+  { name: "人格测试", href: "/oejts32" },
 ]);
 
 const isDark = ref(true);
@@ -459,11 +405,9 @@ body {
     font-weight: 700;
     color: var(--primary-color);
     text-decoration: none;
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--accent-color)
-    );
+    background: linear-gradient(135deg,
+        var(--primary-color),
+        var(--accent-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
@@ -638,6 +582,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
