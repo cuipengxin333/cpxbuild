@@ -120,7 +120,8 @@ import { ref, onMounted, watch } from "vue";
 const navbarList = ref([
   { name: "主页", href: "/" },
   { name: "人格测试", href: "/oejts32" },
-  { name: "工具箱", href: "/toolbox" }
+  { name: "工具箱", href: "/toolbox" },
+  { name: "AIChat", href: "/aichat" },
 ]);
 
 const isDark = ref(true);
