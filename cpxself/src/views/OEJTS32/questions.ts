@@ -37,3 +37,11 @@ export const questions: Question[] = [
   { id: 31, text: "我喜欢欣赏艺术和自然之美。" },
   { id: 32, text: "我对自己充满信心。" }
 ];
+
+export const options = [
+  { label: "完全不同意", value: 1 },
+  { label: "不同意", value: 2 },
+  { label: "中立", value: 3 },
+  { label: "同意", value: 4 },
+  { label: "完全同意", value: 5 },
+];

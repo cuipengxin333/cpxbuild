@@ -2,30 +2,40 @@
   <div class="toolbox-page-container">
     <div class="toolbox-card">
       <div class="toolbox-header">
-        <div class="tool-selector">
-          <select v-model="activeToolKey" class="tool-select">
-            <option
-              v-for="tool in toolOptions"
-              :key="tool.key"
-              :value="tool.key"
-            >
-              {{ tool.icon }} {{ tool.name }}
-            </option>
-          </select>
-          <div class="select-arrow">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path
-                d="M6 9l6 6 6-6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+        <div class="tool-selector" ref="dropdownRef">
+          <div 
+            class="custom-select" 
+            :class="{ 'is-open': isOpen }"
+            @click="isOpen = !isOpen"
+          >
+            <div class="selected-value">
+              <span class="tool-icon">{{ activeTool?.icon }}</span>
+              <span class="tool-name">{{ activeTool?.name }}</span>
+            </div>
+            <div class="select-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
           </div>
+
+          <transition name="dropdown">
+            <div v-if="isOpen" class="dropdown-list">
+              <div 
+                v-for="tool in toolOptions" 
+                :key="tool.key" 
+                class="tool-option"
+                :class="{ 'is-active': activeToolKey === tool.key }"
+                @click="selectTool(tool.key)"
+              >
+                <div class="option-content">
+                  <span class="option-icon">{{ tool.icon }}</span>
+                  <span class="option-name">{{ tool.name }}</span>
+                  <span v-if="activeToolKey === tool.key" class="check-icon">✓</span>
+                </div>
+              </div>
+            </div>
+          </transition>
         </div>
         <div class="tool-info">
           <h1 class="tool-title">{{ activeTool?.name }}</h1>
@@ -43,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, markRaw, type Component } from "vue";
+import { ref, computed, onMounted, onUnmounted, markRaw, type Component } from "vue";
 import JsonTool from "./components/JsonTool.vue";
 import TimestampTool from "./components/TimestampTool.vue";
 import RadixTool from "./components/RadixTool.vue";
@@ -113,6 +123,8 @@ const toolOptions: ToolOption[] = [
 ];
 
 const activeToolKey = ref("json");
+const isOpen = ref(false);
+const dropdownRef = ref<HTMLElement | null>(null);
 
 const activeTool = computed(() => {
   return toolOptions.find((tool) => tool.key === activeToolKey.value);
@@ -122,8 +134,24 @@ const activeComponent = computed(() => {
   return activeTool.value?.component;
 });
 
+const selectTool = (key: string) => {
+  activeToolKey.value = key;
+  isOpen.value = false;
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+    isOpen.value = false;
+  }
+};
+
 onMounted(() => {
   document.title = "开发者工具箱 - 八爪鱼";
+  window.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("click", handleClickOutside);
 });
 </script>
 
@@ -155,51 +183,127 @@ onMounted(() => {
 
 .tool-selector {
   position: relative;
-  width: 240px;
+  width: 260px;
+  z-index: 100;
 
-  .tool-select {
+  .custom-select {
     width: 100%;
-    padding: 0.75rem 1.5rem;
-    padding-right: 3rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    padding: 0.75rem 1.25rem;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 1rem;
-    appearance: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    user-select: none;
 
     &:hover {
       border-color: var(--primary-color);
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(var(--primary-color-rgb), 0.2);
+      box-shadow: 0 6px 16px rgba(var(--primary-color-rgb), 0.15);
     }
 
-    &:focus {
-      outline: none;
+    &.is-open {
       border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+      
+      .select-arrow {
+        transform: rotate(180deg);
+      }
     }
 
-    option {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      padding: 0.5rem;
+    .selected-value {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .tool-icon {
+        font-size: 1.2rem;
+      }
+
+      .tool-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+    }
+
+    .select-arrow {
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+      display: flex;
+
+      svg {
+        width: 1.1rem;
+        height: 1.1rem;
+      }
     }
   }
 
-  .select-arrow {
+  .dropdown-list {
     position: absolute;
-    right: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--text-secondary);
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    padding: 0.5rem;
+    overflow: hidden;
 
-    svg {
-      width: 1.25rem;
-      height: 1.25rem;
+    .tool-option {
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 2px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:hover {
+        background: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+        transform: translateX(4px);
+      }
+
+      &.is-active {
+        background: var(--primary-color);
+        color: white;
+
+        .option-name, .option-icon {
+          color: white;
+        }
+      }
+
+      .option-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .option-icon {
+          font-size: 1.1rem;
+        }
+
+        .option-name {
+          flex: 1;
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .check-icon {
+          font-size: 1rem;
+          font-weight: bold;
+        }
+      }
     }
   }
 }
@@ -230,7 +334,18 @@ onMounted(() => {
   min-height: 400px;
 }
 
-/* 动画 */
+// Transitions
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
 .tool-fade-enter-active,
 .tool-fade-leave-active {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);

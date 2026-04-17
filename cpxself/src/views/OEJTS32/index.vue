@@ -14,35 +14,22 @@
           <span v-if="!showMiniProgress">{{ progressPercentage }}%</span>
         </div>
         <div class="progress-bar-bg">
-          <div
-            class="progress-bar-fill"
-            :style="{ width: progressPercentage + '%' }"
-          ></div>
+          <div class="progress-bar-fill" :style="{ width: progressPercentage + '%' }"></div>
         </div>
       </div>
 
       <!-- 题目列表 -->
       <div class="questions-list">
-        <div
-          v-for="(q, index) in shuffledQuestions"
-          :key="q.id"
-          :id="'q-' + q.id"
-          class="question-item"
-          :class="{ 'is-answered': answers[q.id] }"
-        >
+        <div v-for="(q, index) in shuffledQuestions" :key="q.id" :id="'q-' + q.id" class="question-item"
+          :class="{ 'is-answered': answers[q.id] }">
           <div class="question-text">
             <span class="q-index">{{ index + 1 }}.</span>
             {{ q.text }}
           </div>
 
           <div class="options-group">
-            <button
-              v-for="opt in options"
-              :key="opt.value"
-              class="option-btn"
-              :class="{ active: answers[q.id] === opt.value }"
-              @click="handleSelect(q.id, opt.value)"
-            >
+            <button v-for="opt in options" :key="opt.value" class="option-btn"
+              :class="{ active: answers[q.id] === opt.value }" @click="handleSelect(q.id, opt.value)">
               <span class="opt-val">{{ opt.value }}</span>
               <span class="opt-label">{{ opt.label }}</span>
             </button>
@@ -52,11 +39,7 @@
 
       <!-- 提交区域 -->
       <div class="submit-section">
-        <button
-          class="submit-btn"
-          :disabled="!isAllAnswered || isSubmitting"
-          @click="handleSubmit"
-        >
+        <button class="submit-btn" :disabled="!isAllAnswered || isSubmitting" @click="handleSubmit">
           <span v-if="isSubmitting" class="loading-icon"></span>
           {{ submitBtnText }}
         </button>
@@ -65,42 +48,19 @@
 
     <!-- 分析完成弹窗 -->
     <transition name="modal-fade">
-      <div
-        v-if="showSuccessModal"
-        class="success-modal-overlay"
-        @click.self="showSuccessModal = false"
-      >
+      <div v-if="showSuccessModal" class="success-modal-overlay" @click.self="showSuccessModal = false">
         <div class="success-modal">
           <div class="success-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-            >
-              <path
-                d="M20 6L9 17L4 12"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
           <h2 class="modal-title">分析已完成</h2>
           <p class="modal-desc">我们已经为您生成了详细的人格分析报告</p>
           <button class="view-report-btn" @click="goToResult">
             查看报告
-            <svg
-              class="arrow-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M5 12h14M12 5l7 7-7 7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -119,9 +79,9 @@ import {
   onUnmounted,
 } from "vue";
 import { useRouter } from "vue-router";
-import { questions } from "./questions";
+import { questions, options } from "./questions";
 import { testStore } from "./store";
-import axios from "axios";
+import { mbtiApi } from "../../api/api";
 
 const { appContext } = getCurrentInstance()!;
 const router = useRouter();
@@ -138,13 +98,6 @@ const shuffleArray = (array: any[]) => {
 
 const shuffledQuestions = ref(shuffleArray(questions));
 const totalQuestions = questions.length;
-const options = [
-  { label: "完全不同意", value: 1 },
-  { label: "不同意", value: 2 },
-  { label: "中立", value: 3 },
-  { label: "同意", value: 4 },
-  { label: "完全同意", value: 5 },
-];
 
 // 存储答案
 const answers = reactive<Record<number, number>>({});
@@ -158,7 +111,7 @@ const handleScroll = () => {
 
 onMounted(() => {
   document.title = "OEJTS-32 人格测试";
-   window.addEventListener("scroll", handleScroll);
+  window.addEventListener("scroll", handleScroll);
 });
 
 onUnmounted(() => {
@@ -186,13 +139,9 @@ const handleSubmit = async () => {
 
   isSubmitting.value = true;
   try {
-    const response = await axios.post("https://openjung.org/api/calculate", {
-      answers: answers,
-      locale: "zh",
-      save: false,
-    });
+    const data: any = await mbtiApi.calculate(answers);
 
-    testStore.setResult(response.data);
+    testStore.setResult(data);
     showSuccessModal.value = true;
 
     // 不再直接使用 toast，改用精美弹窗
@@ -238,11 +187,9 @@ const goToResult = () => {
     font-size: 2rem;
     font-weight: 800;
     margin-bottom: 0.75rem;
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--accent-color)
-    );
+    background: linear-gradient(135deg,
+        var(--primary-color),
+        var(--accent-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -302,11 +249,9 @@ const goToResult = () => {
 
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      var(--primary-color),
-      var(--accent-color)
-    );
+    background: linear-gradient(90deg,
+        var(--primary-color),
+        var(--accent-color));
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
@@ -402,11 +347,9 @@ const goToResult = () => {
     font-weight: 700;
     border-radius: 1rem;
     border: none;
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--accent-color)
-    );
+    background: linear-gradient(135deg,
+        var(--primary-color),
+        var(--accent-color));
     color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -499,11 +442,9 @@ const goToResult = () => {
     font-weight: 700;
     border-radius: 1rem;
     border: none;
-    background: linear-gradient(
-      135deg,
-      var(--primary-color),
-      var(--accent-color)
-    );
+    background: linear-gradient(135deg,
+        var(--primary-color),
+        var(--accent-color));
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -530,6 +471,7 @@ const goToResult = () => {
     opacity: 0;
     transform: scale(0.9) translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -549,22 +491,27 @@ const goToResult = () => {
   .test-card {
     padding: 1.25rem;
   }
+
   .options-group {
     grid-template-columns: 1fr;
     gap: 0.5rem;
   }
+
   .option-btn {
     flex-direction: row;
     justify-content: flex-start;
     padding: 0.75rem 1rem;
     gap: 1rem;
+
     .opt-label {
       font-size: 0.9rem;
     }
   }
+
   .test-title {
     font-size: 1.5rem;
   }
+
   .question-item {
     padding: 1rem;
   }
