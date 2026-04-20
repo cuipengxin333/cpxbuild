@@ -89,6 +89,7 @@ export function useChat() {
             try {
               const data = JSON.parse(dataStr);
               const content = data.choices[0]?.delta?.content || "";
+
               if (content) {
                 // 收到第一个有效内容时，才创建助手消息占位并开始打字机
                 if (assistantMessageIndex === -1) {

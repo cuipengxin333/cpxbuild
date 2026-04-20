@@ -11,8 +11,13 @@
           {{ msg.role === "user" ? "👤" : "🤖" }}
         </div>
         <div class="message-content">
-          <div class="message-bubble">
-            {{ msg.content }}
+          <div class="message-bubble" :class="{ 'markdown-content': msg.role === 'assistant' }">
+            <template v-if="msg.role === 'assistant'">
+              <div v-html="formatAIAnswer(msg.content)"></div>
+            </template>
+            <template v-else>
+              {{ msg.content }}
+            </template>
           </div>
           <div class="message-time">{{ msg.time }}</div>
           <div v-if="msg.isError" class="error-actions">
@@ -63,6 +68,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 import { type ChatMessage, chatSuggestions } from '../constants';
+import { formatAIAnswer } from '../utils/format';
 
 const props = defineProps<{
   chatHistory: ChatMessage[];
@@ -124,6 +130,7 @@ defineExpose({ scrollToBottom });
       font-size: 0.95rem;
       line-height: 1.6;
       word-break: break-all;
+      white-space: pre-wrap;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
       &.loading {
@@ -143,6 +150,96 @@ defineExpose({ scrollToBottom });
           }
           &:nth-child(3) {
             animation-delay: 0.4s;
+          }
+        }
+      }
+
+      // Markdown 内容美化
+      &.markdown-content {
+        :deep(h1), :deep(h2), :deep(h3), :deep(h4) {
+          font-weight: 700;
+          line-height: 1.3;
+          
+          &:first-child { margin-top: 0; }
+        }
+        :deep(h1) { font-size: 1.5rem; }
+        :deep(h2) { font-size: 1.3rem; }
+        :deep(h3) { font-size: 1.1rem; }
+
+        :deep(p) {
+          &:last-child { margin-bottom: 0; }
+        }
+
+        :deep(ul), :deep(ol) {
+          padding-left: 1.5rem;
+          line-height: 1.2;
+          &:last-child { margin-bottom: 0; }
+        }
+
+        :deep(li) {
+          &:last-child { margin-bottom: 0; }
+        }
+
+        :deep(code) {
+          background: rgba(var(--primary-color-rgb), 0.1);
+          color: var(--primary-color);
+          padding: 0.1rem 0.3rem;
+          border-radius: 4px;
+          font-family: 'Fira Code', monospace;
+          font-size: 0.9em;
+        }
+
+        :deep(pre) {
+          background: #1e1e1e;
+          color: #d4d4d4;
+          padding: 0.8rem;
+          border-radius: 0.8rem;
+          overflow-x: auto;
+          margin: 0.6rem 0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          
+          &:last-child { margin-bottom: 0; }
+
+          code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-size: 0.85rem;
+          }
+        }
+
+        :deep(blockquote) {
+          border-left: 4px solid var(--primary-color);
+          background: rgba(var(--primary-color-rgb), 0.05);
+          margin: 0.6rem 0;
+          padding: 0.6rem 1rem;
+          border-radius: 0 4px 4px 0;
+          color: var(--text-secondary);
+          
+          &:last-child { margin-bottom: 0; }
+        }
+
+        :deep(hr) {
+          border: none;
+          border-top: 1px solid var(--border-color);
+          margin: 1rem 0;
+        }
+
+        :deep(table) {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 0.6rem 0;
+          
+          &:last-child { margin-bottom: 0; }
+
+          th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.6rem;
+            text-align: left;
+          }
+          
+          th {
+            background: rgba(var(--primary-color-rgb), 0.05);
           }
         }
       }
