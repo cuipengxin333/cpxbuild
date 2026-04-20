@@ -68,7 +68,6 @@ const navbarList = ref([
   { name: "趣味生成", href: "/plaintext" },
   { name: "AIChat", href: "/aichat" },
   { name: "人格测试", href: "/oejts32" },
-  { name: "小飒子练习题", href: "/exercise" }
 ]);
 
 const isDark = ref(true);
