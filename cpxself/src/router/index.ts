@@ -35,6 +35,10 @@ const router = createRouter({
       path: '/plaintext',
       name: 'plaintext',
       component: () => import('../views/PlainText/index.vue')
+    }, {
+      path: '/points',
+      name: 'points',
+      component: () => import('../views/Points/index.vue')
     }
   ]
 })
