@@ -10,8 +10,8 @@
           <label>玩家姓名：</label>
           <input 
             v-model="tempNames[index]" 
+            :placeholder="`请输入玩家姓名${name}`"
             type="text" 
-            placeholder="请输入玩家姓名" 
             @keyup.enter="startGame" 
           />
         </div>
