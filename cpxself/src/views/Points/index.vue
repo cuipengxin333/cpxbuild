@@ -1,45 +1,65 @@
 <template>
-  <div class="points-container">
-    <h1>娱乐积分板</h1>
+  <div class="points-page">
+    <div class="points-card">
+      <header class="page-header">
+        <h1 class="page-title">娱乐积分板</h1>
+        <p class="page-subtitle">三人娱乐计分，实时记录每一局</p>
+      </header>
 
-    <!-- 准备阶段：输入姓名 -->
-    <div v-if="!isGameStarted" class="setup-section">
-      <div class="tip-banner">{{ TIPS }}</div>
-      <div class="input-group">
-        <div v-for="(name, index) in tempNames" :key="index" class="input-item">
-          <label>玩家姓名：</label>
-          <input 
-            v-model="tempNames[index]" 
-            :placeholder="`请输入玩家姓名${name}`"
-            type="text" 
-            @keyup.enter="startGame" 
+      <!-- 准备阶段：输入姓名 -->
+      <div v-if="!isGameStarted" class="setup-section">
+        <div class="tip-banner">
+          <span class="tip-icon">ℹ️</span>
+          <span>{{ TIPS }}</span>
+        </div>
+        <div class="input-group">
+          <div
+            v-for="(name, index) in tempNames"
+            :key="index"
+            class="input-item"
+          >
+            <span class="player-badge">{{ index + 1 }}</span>
+            <input
+              v-model="tempNames[index]"
+              :placeholder="`请输入玩家 ${index + 1} 姓名`"
+              type="text"
+              @keyup.enter="startGame"
+            />
+          </div>
+        </div>
+        <button
+          class="start-btn"
+          :disabled="!isReadyToStart"
+          @click="startGame"
+        >
+          开始游戏
+        </button>
+      </div>
+
+      <!-- 游戏阶段：计分 -->
+      <div v-else class="game-section">
+        <div class="player-cards">
+          <PlayerCard
+            v-for="(player, index) in players"
+            :key="index"
+            :player="player"
+            @apply-rule="(ruleKey) => applyRule(index, ruleKey)"
           />
         </div>
-      </div>
-      <button class="start-btn" :disabled="!isReadyToStart" @click="startGame">
-        开始游戏
-      </button>
-    </div>
 
-    <!-- 游戏阶段：计分 -->
-    <div v-else class="game-section">
-      <div class="player-cards">
-        <PlayerCard 
-          v-for="(player, index) in players" 
-          :key="index"
-          :player="player"
-          @apply-rule="(ruleKey) => applyRule(index, ruleKey)"
-        />
-      </div>
-
-      <div class="action-footer">
-        <button class="reset-btn" @click="confirmAction('reset')">重新开始</button>
-        <button class="clear-btn" @click="confirmAction('clear')">清空分数</button>
+        <div class="action-footer">
+          <button class="action-btn reset-btn" @click="confirmAction('reset')">
+            重新开始
+          </button>
+          <button class="action-btn clear-btn" @click="confirmAction('clear')">
+            清空分数
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- 自定义确认弹窗 -->
-    <CustomModal 
+    <CustomModal
       :show="modal.show"
       :message="modal.message"
       @close="closeModal"
@@ -49,292 +69,411 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
-import type { Player, RuleKey } from './types'
-import { TIPS } from './constants'
-import PlayerCard from './PlayerCard.vue'
-import CustomModal from './CustomModal.vue'
+import { ref, computed, reactive } from "vue";
+import type { Player, RuleKey } from "./types";
+import { TIPS } from "./constants";
+import PlayerCard from "./PlayerCard.vue";
+import CustomModal from "./CustomModal.vue";
 
-const isGameStarted = ref(false)
-const tempNames = ref(['', '', ''])
+const isGameStarted = ref(false);
+const tempNames = ref(["", "", ""]);
 const players = ref<Player[]>([
-  { name: '', score: 0, isLead: false },
-  { name: '', score: 0, isLead: false },
-  { name: '', score: 0, isLead: false }
-])
+  { name: "", score: 0, isLead: false },
+  { name: "", score: 0, isLead: false },
+  { name: "", score: 0, isLead: false },
+]);
 
 // 弹窗状态
 const modal = reactive({
   show: false,
-  message: '',
-  onConfirm: () => { }
-})
+  message: "",
+  onConfirm: () => {},
+});
 
 const showConfirm = (message: string, onConfirm: () => void) => {
-  modal.message = message
-  modal.onConfirm = onConfirm
-  modal.show = true
-}
+  modal.message = message;
+  modal.onConfirm = onConfirm;
+  modal.show = true;
+};
 
 const closeModal = () => {
-  modal.show = false
-}
+  modal.show = false;
+};
 
 const handleModalConfirm = () => {
-  modal.onConfirm()
-  closeModal()
-}
+  modal.onConfirm();
+  closeModal();
+};
 
 const isReadyToStart = computed(() => {
-  return tempNames.value.every(name => name.trim() !== '')
-})
+  return tempNames.value.every((name) => name.trim() !== "");
+});
 
 const startGame = () => {
-  if (!isReadyToStart.value) return
+  if (!isReadyToStart.value) return;
 
   players.value = tempNames.value.map((name, index) => ({
     name: name.trim(),
     score: 0,
-    isLead: index === 0
-  }))
-  isGameStarted.value = true
-}
+    isLead: index === 0,
+  }));
+  isGameStarted.value = true;
+};
 
 const applyRule = (index: number, rule: string) => {
-  const selfIdx = index
-  const nextIdx = (index + 1) % 3
-  const prevIdx = (index + 2) % 3
+  const selfIdx = index;
+  const nextIdx = (index + 1) % 3;
+  const prevIdx = (index + 2) % 3;
 
-  const self = players.value[selfIdx]
-  const next = players.value[nextIdx]
-  const prev = players.value[prevIdx]
+  const self = players.value[selfIdx];
+  const next = players.value[nextIdx];
+  const prev = players.value[prevIdx];
 
-  let confirmMsg = ''
-  let action = () => { }
-  let shouldReorder = false
-  let newLeadIdx = -1
+  let confirmMsg = "";
+  let action = () => {};
+  let shouldReorder = false;
+  let newLeadIdx = -1;
 
   switch (rule as RuleKey) {
-    case 'foul':
-      confirmMsg = `是否给 ${self.name} -1分，给 ${prev.name} +1分？`
+    case "foul":
+      confirmMsg = `是否给 ${self.name} -1分，给 ${prev.name} +1分？`;
       action = () => {
-        players.value[selfIdx].score -= 1
-        players.value[prevIdx].score += 1
-      }
-      break
-    case 'give':
-      confirmMsg = `是否给 ${self.name} +1分，给 ${prev.name} -1分？`
+        players.value[selfIdx].score -= 1;
+        players.value[prevIdx].score += 1;
+      };
+      break;
+    case "give":
+      confirmMsg = `是否给 ${self.name} +1分，给 ${prev.name} -1分？`;
       action = () => {
-        players.value[selfIdx].score += 1
-        players.value[prevIdx].score -= 1
-      }
-      break
-    case 'normal':
-      confirmMsg = `是否给 ${self.name} +4分，给 ${prev.name} -4分？(触发换位)`
+        players.value[selfIdx].score += 1;
+        players.value[prevIdx].score -= 1;
+      };
+      break;
+    case "normal":
+      confirmMsg = `是否给 ${self.name} +4分，给 ${prev.name} -4分？(触发换位)`;
       action = () => {
-        players.value[selfIdx].score += 4
-        players.value[prevIdx].score -= 4
-      }
-      shouldReorder = true
-      newLeadIdx = selfIdx
-      break
-    case 'double_down':
-      confirmMsg = `是否给 ${self.name} -4分，给 ${prev.name} +4分？(触发换位)`
+        players.value[selfIdx].score += 4;
+        players.value[prevIdx].score -= 4;
+      };
+      shouldReorder = true;
+      newLeadIdx = selfIdx;
+      break;
+    case "double_down":
+      confirmMsg = `是否给 ${self.name} -4分，给 ${prev.name} +4分？(触发换位)`;
       action = () => {
-        players.value[selfIdx].score -= 4
-        players.value[prevIdx].score += 4
-      }
-      shouldReorder = true
-      newLeadIdx = selfIdx
-      break
-    case 'small_gold':
-      confirmMsg = `是否给 ${self.name} +7分，给 ${prev.name} -7分？(触发换位)`
+        players.value[selfIdx].score -= 4;
+        players.value[prevIdx].score += 4;
+      };
+      shouldReorder = true;
+      newLeadIdx = selfIdx;
+      break;
+    case "small_gold":
+      confirmMsg = `是否给 ${self.name} +7分，给 ${prev.name} -7分？(触发换位)`;
       action = () => {
-        players.value[selfIdx].score += 7
-        players.value[prevIdx].score -= 7
-      }
-      shouldReorder = true
-      newLeadIdx = selfIdx
-      break
-    case 'black':
-      confirmMsg = `是否给 ${self.name} -8分，${next.name} +4分，${prev.name} +4分？`
+        players.value[selfIdx].score += 7;
+        players.value[prevIdx].score -= 7;
+      };
+      shouldReorder = true;
+      newLeadIdx = selfIdx;
+      break;
+    case "black":
+      confirmMsg = `是否给 ${self.name} -8分，${next.name} +4分，${prev.name} +4分？`;
       action = () => {
-        players.value[selfIdx].score -= 8
-        players.value[nextIdx].score += 4
-        players.value[prevIdx].score += 4
-      }
-      newLeadIdx = selfIdx
-      break
-    case 'gold9':
-      confirmMsg = `是否给 ${self.name} +8分，${next.name} -4分，${prev.name} -4分？`
+        players.value[selfIdx].score -= 8;
+        players.value[nextIdx].score += 4;
+        players.value[prevIdx].score += 4;
+      };
+      newLeadIdx = selfIdx;
+      break;
+    case "gold9":
+      confirmMsg = `是否给 ${self.name} +8分，${next.name} -4分，${prev.name} -4分？`;
       action = () => {
-        players.value[selfIdx].score += 8
-        players.value[nextIdx].score -= 4
-        players.value[prevIdx].score -= 4
-      }
-      newLeadIdx = selfIdx
-      break
-    case 'big_gold':
-      confirmMsg = `是否给 ${self.name} +20分，${next.name} -10分，${prev.name} -10分？`
+        players.value[selfIdx].score += 8;
+        players.value[nextIdx].score -= 4;
+        players.value[prevIdx].score -= 4;
+      };
+      newLeadIdx = selfIdx;
+      break;
+    case "big_gold":
+      confirmMsg = `是否给 ${self.name} +20分，${next.name} -10分，${prev.name} -10分？`;
       action = () => {
-        players.value[selfIdx].score += 20
-        players.value[nextIdx].score -= 10
-        players.value[prevIdx].score -= 10
-      }
-      newLeadIdx = selfIdx
-      break
+        players.value[selfIdx].score += 20;
+        players.value[nextIdx].score -= 10;
+        players.value[prevIdx].score -= 10;
+      };
+      newLeadIdx = selfIdx;
+      break;
   }
 
   if (confirmMsg) {
     showConfirm(confirmMsg, () => {
-      action()
+      action();
       if (newLeadIdx !== -1) {
         players.value.forEach((p, i) => {
-          p.isLead = i === newLeadIdx
-        })
+          p.isLead = i === newLeadIdx;
+        });
       }
       if (shouldReorder) {
-        const winner = players.value[selfIdx]
-        const upper = players.value[(selfIdx + 2) % 3]
-        const lower = players.value[(selfIdx + 1) % 3]
-        players.value = [winner, upper, lower]
-        players.value.forEach((p, i) => p.isLead = i === 0)
+        const winner = players.value[selfIdx];
+        const upper = players.value[(selfIdx + 2) % 3];
+        const lower = players.value[(selfIdx + 1) % 3];
+        players.value = [winner, upper, lower];
+        players.value.forEach((p, i) => (p.isLead = i === 0));
       }
-    })
+    });
   }
-}
+};
 
-const confirmAction = (type: 'reset' | 'clear') => {
-  const msg = type === 'reset' ? '确定要重新开始吗？这将清除所有姓名和分数。' : '确定要清空所有分数吗？'
+const confirmAction = (type: "reset" | "clear") => {
+  const msg =
+    type === "reset"
+      ? "确定要重新开始吗？这将清除所有姓名和分数。"
+      : "确定要清空所有分数吗？";
   showConfirm(msg, () => {
-    if (type === 'reset') {
-      isGameStarted.value = false
-      tempNames.value = ['', '', '']
+    if (type === "reset") {
+      isGameStarted.value = false;
+      tempNames.value = ["", "", ""];
       players.value = [
-        { name: '', score: 0, isLead: false },
-        { name: '', score: 0, isLead: false },
-        { name: '', score: 0, isLead: false }
-      ]
+        { name: "", score: 0, isLead: false },
+        { name: "", score: 0, isLead: false },
+        { name: "", score: 0, isLead: false },
+      ];
     } else {
-      players.value.forEach(p => p.score = 0)
+      players.value.forEach((p) => (p.score = 0));
     }
-  })
-}
+  });
+};
 </script>
 
 <style scoped lang="scss">
-.points-container {
-  max-width: 800px;
+.points-page {
+  max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
-  text-align: center;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  padding: 1.5rem 1rem 3rem;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
-h1 {
-  color: #2c3e50;
-  margin-bottom: 30px;
+.points-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1.5rem;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(20px);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.page-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 .tip-banner {
-  background-color: #fff3cd;
-  color: #856404;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.15);
+
+  .tip-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
 }
 
 .setup-section {
-  background: #f8f9fa;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 25px;
+  gap: 0.875rem;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 1.75rem;
 }
 
 .input-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 0.75rem;
 }
 
-.input-item label {
-  width: 100px;
-  text-align: right;
-  font-weight: bold;
-  color: #34495e;
+.player-badge {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .input-item input {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 200px;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
   outline: none;
-}
+  transition: var(--transition);
 
-.input-item input:focus {
-  border-color: #42b983;
+  &::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.12);
+  }
 }
 
 .start-btn {
-  background-color: #42b983;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
   color: white;
   border: none;
-  padding: 10px 30px;
-  border-radius: 20px;
-  font-size: 1.1rem;
+  padding: 0.75rem 2.5rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: var(--transition);
+  box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.35);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.45);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
 }
 
-.start-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.game-section {
+  display: flex;
+  flex-direction: column;
 }
 
 .player-cards {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .action-footer {
-  margin-top: 40px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 0.875rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
-.reset-btn,
-.clear-btn {
-  padding: 8px 20px;
-  border-radius: 4px;
+.action-btn {
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  border: none;
-  color: white;
+  border: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.12);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
-.reset-btn {
-  background: #2e705c;
+.reset-btn:hover {
+  background: rgba(var(--primary-color-rgb), 0.08);
 }
 
-.clear-btn {
-  background: #295b9c;
+.clear-btn:hover {
+  background: rgba(var(--accent-color-rgb), 0.08);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
-@media (max-width: 600px) {
-  .player-cards {
+@media (max-width: 480px) {
+  .points-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .action-footer {
     flex-direction: column;
+
+    .action-btn {
+      width: 100%;
+    }
   }
 }
 </style>

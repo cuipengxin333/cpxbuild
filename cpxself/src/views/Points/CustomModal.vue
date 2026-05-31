@@ -23,84 +23,88 @@ defineEmits<{
 }>()
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   width: 90%;
-  max-width: 320px;
-  border-radius: 12px;
+  max-width: 340px;
+  border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: modal-in 0.3s ease-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  animation: modal-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes modal-in {
   from {
-    transform: translateY(20px);
+    transform: translateY(16px) scale(0.97);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
 .modal-header {
-  padding: 15px;
-  font-weight: bold;
-  border-bottom: 1px solid #eee;
-  font-size: 1.1rem;
-  color: #2c3e50;
+  padding: 1rem 1.25rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.05rem;
+  color: var(--text-primary);
   text-align: center;
 }
 
 .modal-body {
-  padding: 20px;
-  font-size: 1rem;
-  color: #444;
-  line-height: 1.5;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
   text-align: center;
 }
 
 .modal-footer {
   display: flex;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
 }
 
 .modal-btn {
   flex: 1;
-  padding: 12px;
+  padding: 0.875rem;
   border: none;
   background: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: var(--transition);
 }
 
 .modal-btn.cancel {
-  color: #666;
-  border-right: 1px solid #eee;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border-color);
+
+  &:hover {
+    background: rgba(var(--primary-color-rgb), 0.05);
+  }
 }
 
 .modal-btn.confirm {
-  color: #42b983;
-  font-weight: bold;
-}
+  color: var(--primary-color);
+  font-weight: 700;
 
-.modal-btn:active {
-  background-color: #f9f9f9;
+  &:hover {
+    background: rgba(var(--primary-color-rgb), 0.08);
+  }
 }
 </style>
