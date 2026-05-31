@@ -13,11 +13,7 @@
           <span>{{ TIPS }}</span>
         </div>
         <div class="input-group">
-          <div
-            v-for="(name, index) in tempNames"
-            :key="index"
-            class="input-item"
-          >
+          <div v-for="(_, index) in tempNames" :key="index" class="input-item">
             <span class="player-badge">{{ index + 1 }}</span>
             <input
               v-model="tempNames[index]"
