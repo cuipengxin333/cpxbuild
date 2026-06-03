@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "百度截图搜索",
+  "version": "1.0.0",
+  "description": "在趣味生成页面搜索百度并截图展示结果",
+  "permissions": [
+    "tabs",
+    "debugger"
+  ],
+  "host_permissions": [
+    "https://www.baidu.com/*",
+    "http://localhost:*/*",
+    "http://127.0.0.1:*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_title": "百度截图搜索"
+  }
+}
